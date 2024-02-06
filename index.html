@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Button Counter</title>
+</head>
+<body>
+    <button id="incrementBtn">Click me!</button>
+    <p>Counter: <span id="counter">0</span></p>
+    <p>Status: <span id="status">-</span></p>
+
+    <script>
+        const counterElement = document.getElementById("counter");
+        const statusElement = document.getElementById("status");
+        const incrementBtn = document.getElementById("incrementBtn");
+
+        const updateCounter = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/get-counter');
+                const count = await response.text();
+                counterElement.textContent = count;
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        incrementBtn.addEventListener("click", async () => {
+            statusElement.textContent = 'Updating...';
+            try {
+                await fetch('http://localhost:8000/increment-counter', { method: 'POST' });
+                updateCounter();
+                statusElement.textContent = 'Updated!';
+            } catch (error) {
+                statusElement.textContent = 'Failed to update';
+                console.error(error);
+            }
+        });
+
+        // Обновление счетчика при загрузке страницы
+        updateCounter();
+    </script>
+</body>
+</html>
