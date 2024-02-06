@@ -1,7 +1,17 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 
 app = FastAPI()
+
+# Настройка CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],  # Разрешаем доступ с этого origin
+    allow_credentials=True,
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
 
 def get_counter():
     try:
@@ -25,6 +35,4 @@ async def increment_counter(request: Request):
 async def get_counter_api():
     count = get_counter()
     response = PlainTextResponse(str(count))
-    response.headers["Cache-Control"] = "no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
     return response
